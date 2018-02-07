@@ -1,0 +1,14 @@
+package com.gyb.ssm.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+@RequestMapping("/hello")
+public class Hello {
+    
+    @RequestMapping("/hello.html")
+    public String hello() {
+        return "hello";
+    }
+}
