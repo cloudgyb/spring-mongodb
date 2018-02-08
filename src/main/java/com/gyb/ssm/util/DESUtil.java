@@ -13,6 +13,7 @@ import sun.misc.BASE64Encoder;
  * @author Administrator
  *
  */
+@SuppressWarnings("restriction")
 public class DESUtil {
 	private static Key key;
 	private static String KEY_STR = "mykey";
