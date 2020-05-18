@@ -1,7 +1,9 @@
-package com.gyb.ssm.util;
+package com.gyb.spring.mongodb.util;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -13,10 +15,9 @@ import sun.misc.BASE64Encoder;
  * @author Administrator
  *
  */
-@SuppressWarnings("restriction")
 public class DESUtil {
-	private static Key key;
-	private static String KEY_STR = "mykey";
+	private static final Key key;
+	private static final String KEY_STR = "mykey";
 
 	static {
 		try {
@@ -25,62 +26,52 @@ public class DESUtil {
 			secureRandom.setSeed(KEY_STR.getBytes());
 			generator.init(secureRandom);
 			key = generator.generateKey();
-			generator = null;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
 	/**
-	 * 对字符串进行加密，返回BASE64的加密字符串 
-	 * 
-	 * @param str
-	 * @return String
+	 * 对字符串进行加密，返回BASE64的加密字符串
 	 */
-	public static String getEncryptString(String str) {
-		BASE64Encoder base64Encoder = new BASE64Encoder();
-		//System.out.println(key);
+	public static String encryptString(String str) {
+		Base64.Encoder base64Encoder = Base64.getEncoder();
 		try {
-			byte[] strBytes = str.getBytes("UTF-8");
+			byte[] strBytes = str.getBytes(StandardCharsets.UTF_8);
 			Cipher cipher = Cipher.getInstance("DES");
 			cipher.init(Cipher.ENCRYPT_MODE, key);
 			byte[] encryptStrBytes = cipher.doFinal(strBytes);
-			return base64Encoder.encode(encryptStrBytes);
+			return base64Encoder.encodeToString(encryptStrBytes);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-
 	}
 
 	/**
 	 * 对BASE64加密字符串进行解密 <功能详细描述>
-	 * 
-	 * @param str
-	 * @return string
 	 */
-	public static String getDecryptString(String str) {
-		BASE64Decoder base64Decoder = new BASE64Decoder();
+	public static String decryptString(String str) {
+		Base64.Decoder base64Decoder = Base64.getDecoder();
 		try {
-			byte[] strBytes = base64Decoder.decodeBuffer(str);
+			byte[] strBytes = base64Decoder.decode(str);
 			Cipher cipher = Cipher.getInstance("DES");
 			cipher.init(Cipher.DECRYPT_MODE, key);
 			byte[] encryptStrBytes = cipher.doFinal(strBytes);
-			return new String(encryptStrBytes, "UTF-8");
+			return new String(encryptStrBytes, StandardCharsets.UTF_8);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
-
 	}
 
 	public static void main(String[] args) {
 		String name = "root";
 		String password = "123456";
-		String encryname = getEncryptString(name);
-		String encrypassword = getEncryptString(password);
+		String encryname = encryptString(name);
+		String encrypassword = encryptString(password);
 		System.out.println(encryname);
 		System.out.println(encrypassword);
 
-		System.out.println(getDecryptString(encryname));
-		System.out.println(getDecryptString(encrypassword));
+		System.out.println(decryptString(encryname));
+		System.out.println(decryptString(encrypassword));
 	}
 }

@@ -1,18 +1,16 @@
-package com.gyb.ssm.util;
+package com.gyb.spring.mongodb.util;
 
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 
 public class EncryptPropertyPlaceholderConfigurer extends PropertyPlaceholderConfigurer {
-	private String[] encryptPropNames = { "jdbc.username", "jdbc.password" };
+	private final String[] encryptPropNames = { "jdbc.username", "jdbc.password" };
 
 	@Override
 	protected String convertProperty(String propertyName, String propertyValue) {
 
 		// 如果在加密属性名单中发现该属性
 		if (isEncryptProp(propertyName)) {
-			String decryptValue = DESUtil.getDecryptString(propertyValue);
-			//System.out.println(decryptValue);
-			return decryptValue;
+			return DESUtil.decryptString(propertyValue);
 		} else {
 			return propertyValue;
 		}
